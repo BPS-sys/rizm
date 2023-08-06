@@ -136,6 +136,9 @@ def main():
     last_draw_time = 0
     circles = []
     countdown_list = ["3", "2", "1", "START!"]
+    GG_font = pygame.font.Font(None, 100)
+    Great_text = GG_font.render('Great!', True, (255, 255, 255))
+    Good_text = GG_font.render('Good!', True, (255, 255, 255))
 
     # カウントダウン開始時間を記録
     countdown_timer = None
@@ -231,12 +234,18 @@ def main():
                 # すべての円に対して、手の関節との接触を判定
                 circles_to_remove = []
                 for i, circle in enumerate(circles):
-                    x, y, big_radius, _, _ = circle
+                    x, y, big_radius, small_radius, circle_start = circle
                     for joint_x, joint_y in zip(hand_joints_x, hand_joints_y):
                         if circle_collision(x, y, big_radius, joint_x, joint_y):
+                            if 3 < time.time()-circle_start:
+                                score += 500 # +500
+                                screen.blit(Great_text, (x, y))
+                            else:
+                                score += 100 # +100
+                                screen.blit(Good_text, (x, y))
                             circles_to_remove.append(i)
-                            score += 1  # スコアを1加算
                             break
+                            
 
                 # 接触した円を削除
                 for index in reversed(circles_to_remove):
