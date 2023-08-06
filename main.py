@@ -10,7 +10,7 @@ import threading
 
 WIDTH = 800
 HEIGHT = 600
-random.seed(123)
+
 
 def get_waveform_from_wav(wav_file):
     audio = AudioSegment.from_file(wav_file)
@@ -112,15 +112,18 @@ def draw_countdown(screen, countdown):
     countdown_rect = countdown_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
     screen.blit(countdown_text, countdown_rect)
 
+# -100か+100どちらに移動するのかを決める
 def get_rdm_index():
     rdm_x = random.randint(0, 1)
     rdm_y = random.randint(0, 1)
     return rdm_x, rdm_y
 
+# 音楽の再生
 def start_play_music(file):
+    # 音ズレ対策で3.4秒後に音楽が流れるように
     time.sleep(3.4)
     music = pygame.mixer.Sound(file)
-    music.set_volume(0.1)
+    music.set_volume(0.1) # 音量
     music.play()
     
 
@@ -131,7 +134,7 @@ def main():
     pygame.display.set_caption("Waveform Circles")
 
     # wav_file = input("このファイルと同じフォルダにある.wavファイルの名前を入力: ")
-    wav_file = "01_アイドルライフスターターパックtest.wav"
+    wav_file = "01_アイドルライフスターターパック.wav"
     waveform = get_waveform_from_wav(wav_file)
 
     pygame.mixer.init()
@@ -142,7 +145,7 @@ def main():
     running = True
     play_music = False
     display_countdown = False
-    # 0.2->0.3
+    # 難易度調整のために0.2->0.3に変更
     threshold = 0.3
     last_draw_time = 0
     circles = []
@@ -159,12 +162,10 @@ def main():
 
     score = 0  # スコアの初期値
     font = pygame.font.Font(None, 36)
-
+    
+    # 移動する距離
     circle_distance_x = [-100, 100]
     circle_distance_y = [-100, 100]
-    x = 200
-    y = 200
-    
 
     while running:
         for event in pygame.event.get():
@@ -176,6 +177,7 @@ def main():
 
         if not pygame.mixer.music.get_busy() and play_music:
             play_music = False
+            # 1ゲーム終了したあと、再度Enterキーを押すとカウントダウンが開始するように
             countdown_timer = None
 
         screen.fill((0, 0, 0))
@@ -184,13 +186,16 @@ def main():
             current_pos = pygame.mixer.music.get_pos()
             sample_pos = int(current_pos / 1000 * 44100)
 
+            # 難易度緩和のために表示間隔を1000msに変更
             if sample_pos < len(waveform) and 1000 < pygame.time.get_ticks() - last_draw_time:
                 current_sample = waveform[sample_pos]
 
                 if abs(current_sample) > threshold:
+                    # 連ノーツ。前回表示したノーツから1000~1400ms後だったとき
                     if 1000 <  pygame.time.get_ticks() - last_draw_time < 1400:
                         x += circle_distance_x[rdm_index_x]
                         y += circle_distance_y[rdm_index_y]
+                        # 加算時に画面外に出てしまったとき
                         if x > 800:
                             x = 100
                         elif x < 0:
@@ -200,6 +205,7 @@ def main():
                         elif y < 0:
                             y = 500
                     else:
+                        # 座標の移動距離。ここでとることでノーツの重なりを防ぐ
                         rdm_index_x, rdm_index_y = get_rdm_index()
                         x = random.randint(0, 800)
                         y = random.randint(0, 600)
@@ -247,20 +253,21 @@ def main():
                 circles_to_remove = []
                 for i, circle in enumerate(circles):
                     x, y, big_radius, small_radius, circle_start = circle
-                    joint_x= hand_joints_x[8]
-                    joint_y = hand_joints_y[8]
+                    joint_x= hand_joints_x[8]  # 人差し指のx座標
+                    joint_y = hand_joints_y[8] # 人差し指のy座標
                     if circle_collision(x, y, small_radius, joint_x, joint_y):
+                        # Great判定
                         if 3.4 < time.time()-circle_start and time.time()-circle_start < 3.7:
-                            score += 500 # +500
+                            score += 500
                             great_sound = pygame.mixer.Sound("Great.mp3")
-                            great_sound.set_volume(1)
+                            great_sound.set_volume(1) # 音量
                             great_sound.play()
                             screen.blit(Great_text, (x, y))
-
+                        # Good判定
                         else:
-                            score += 100 # +100
+                            score += 100
                             good_sound = pygame.mixer.Sound("Good.mp3")
-                            good_sound.set_volume(1)
+                            good_sound.set_volume(1) # 音量
                             good_sound.play()
                             screen.blit(Good_text, (x, y))
                         circles_to_remove.append(i)
@@ -274,7 +281,7 @@ def main():
         draw_score(screen, score)
 
         if display_countdown and not play_music:
-            score = 0
+            score = 0  # スコアリセット
             if not countdown_timer:
                 countdown_timer = time.time()
 
@@ -285,8 +292,10 @@ def main():
             if countdown_remaining >= 0 and countdown_remaining < len(countdown_list):
                 draw_countdown(screen, countdown_list[countdown_remaining])
             else:
-                pygame.mixer.music.play()  # エンターキーが押されたら音楽を再生
+                # 音量0でダミーとして再生。譜面のリズムを取るために使用する。
+                pygame.mixer.music.play()
                 pygame.mixer.music.set_volume(0)
+                # 実際に音楽を流す。
                 th1 = threading.Thread(target=start_play_music, args=(wav_file, ))
                 th1.start()
                 play_music = True
