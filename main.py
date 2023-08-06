@@ -6,6 +6,7 @@ import time
 import cv2
 import mediapipe as mp
 import threading
+import winsound
 
 WIDTH = 800
 HEIGHT = 600
@@ -115,12 +116,11 @@ def get_rdm_index():
     rdm_y = random.randint(0, 1)
     return rdm_x, rdm_y
 
-def start_play_music():
+def start_play_music(file):
     time.sleep(3)
-    pygame.mixer.music.play()
-    pygame.mixer.music.stop()
-    pygame.mixer.music.play()
-    pygame.mixer.music.set_volume(1)
+    music = pygame.mixer.Sound(file)
+    music.play()
+    #winsound.PlaySound(file, winsound.SND_FILENAME|winsound.SND_ASYNC|winsound.SND_LOOP)
 
     
 def main():
@@ -277,7 +277,7 @@ def main():
             else:
                 pygame.mixer.music.play()  # エンターキーが押されたら音楽を再生
                 pygame.mixer.music.set_volume(0)
-                th1 = threading.Thread(target=start_play_music)
+                th1 = threading.Thread(target=start_play_music, args=(wav_file, ))
                 th1.start()
                 play_music = True
                 display_countdown = False
