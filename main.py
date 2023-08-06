@@ -185,7 +185,7 @@ def main():
 
         if play_music:
             current_pos = pygame.mixer.music.get_pos()
-            sample_pos = int(current_pos / 1000 * 44100)
+            sample_pos = int(current_pos / 1500 * 44100)
 
             # 難易度緩和のために表示間隔を1000msに変更
             if sample_pos < len(waveform) and 1000 < pygame.time.get_ticks() - last_draw_time:
