@@ -107,6 +107,12 @@ def draw_countdown(screen, countdown):
     countdown_text = font.render(str(countdown), True, (255, 255, 255))
     countdown_rect = countdown_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
     screen.blit(countdown_text, countdown_rect)
+
+def get_rdm_index():
+    rdm_x = random.randint(0, 1)
+    rdm_y = random.randint(0, 1)
+    return rdm_x, rdm_y
+
     
 def main():
     pygame.init()
@@ -125,7 +131,8 @@ def main():
     running = True
     play_music = False
     display_countdown = False
-    threshold = 0.2
+    # 0.2->0.3
+    threshold = 0.3
     last_draw_time = 0
     circles = []
     countdown_list = ["3", "2", "1", "START!"]
@@ -138,6 +145,12 @@ def main():
 
     score = 0  # スコアの初期値
     font = pygame.font.Font(None, 36)
+
+    circle_distance_x = [-100, 100]
+    circle_distance_y = [-100, 100]
+    x = 200
+    y = 200
+    
 
     while running:
         for event in pygame.event.get():
@@ -156,12 +169,25 @@ def main():
             current_pos = pygame.mixer.music.get_pos()
             sample_pos = int(current_pos / 1000 * 44100)
 
-            if sample_pos < len(waveform) and pygame.time.get_ticks() - last_draw_time > 500:
+            if sample_pos < len(waveform) and 500 < pygame.time.get_ticks() - last_draw_time:
                 current_sample = waveform[sample_pos]
 
                 if abs(current_sample) > threshold:
-                    x = random.randint(0, 800)
-                    y = random.randint(0, 600)
+                    if 500 <  pygame.time.get_ticks() - last_draw_time < 700:
+                        x += circle_distance_x[rdm_index_x]
+                        y += circle_distance_y[rdm_index_y]
+                        if x > 800:
+                            x = 0
+                        elif x < 0:
+                            x = 800
+                        if y > 600:
+                            y = 0
+                        elif y < 0:
+                            y = 600
+                    else:
+                        rdm_index_x, rdm_index_y = get_rdm_index()
+                        x = random.randint(0, 800)
+                        y = random.randint(0, 600)
                     big_radius = int(abs(current_sample) * 100)
                     small_radius = int(big_radius * 0.4)
                     # 新しい円を追加するときに経過時間も記録
