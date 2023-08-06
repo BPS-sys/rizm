@@ -8,6 +8,7 @@ import mediapipe as mp
 
 WIDTH = 800
 HEIGHT = 600
+random.seed(123)
 
 def get_waveform_from_wav(wav_file):
     audio = AudioSegment.from_file(wav_file)
@@ -84,7 +85,7 @@ def draw_circles(screen, circles):
                 current_small_radius = small_radius
 
             # 大きな円を描画
-            pygame.draw.circle(screen, (0, 0, 255), (x, y), current_big_radius)
+            pygame.draw.circle(screen, (0, 0, 255), (x, y), current_big_radius, 2)
         else:
             # 大きな円が縮小し終わった後は削除
             circles_to_remove.append(i)
@@ -154,6 +155,7 @@ def main():
     x = 200
     y = 200
     
+    
 
     while running:
         for event in pygame.event.get():
@@ -172,21 +174,21 @@ def main():
             current_pos = pygame.mixer.music.get_pos()
             sample_pos = int(current_pos / 1000 * 44100)
 
-            if sample_pos < len(waveform) and 500 < pygame.time.get_ticks() - last_draw_time:
+            if sample_pos < len(waveform) and 1000 < pygame.time.get_ticks() - last_draw_time:
                 current_sample = waveform[sample_pos]
 
                 if abs(current_sample) > threshold:
-                    if 500 <  pygame.time.get_ticks() - last_draw_time < 700:
+                    if 1000 <  pygame.time.get_ticks() - last_draw_time < 1400:
                         x += circle_distance_x[rdm_index_x]
                         y += circle_distance_y[rdm_index_y]
                         if x > 800:
-                            x = 0
+                            x = 100
                         elif x < 0:
-                            x = 800
+                            x = 700
                         if y > 600:
-                            y = 0
+                            y = 100
                         elif y < 0:
-                            y = 600
+                            y = 500
                     else:
                         rdm_index_x, rdm_index_y = get_rdm_index()
                         x = random.randint(0, 800)
