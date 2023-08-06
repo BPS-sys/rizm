@@ -50,17 +50,18 @@ def detect_hand_landmarks(image):
 def draw_hand_landmarks(screen, hand_landmarks_list):
     for hand_landmarks in hand_landmarks_list:
         if hand_landmarks:
-            for landmark in hand_landmarks.landmark:
-                # ランドマークの座標を画像座標に変換して描画
-                x = int(landmark.x * WIDTH)
-                y = int(landmark.y * HEIGHT)
-                # 緑色でランドマークを描画
-                pygame.draw.circle(screen, (0, 255, 0), (x, y), 5)
+            for i, landmark in enumerate(hand_landmarks.landmark):
+                if i == 9:
+                    #ランドマークの座標を画像座標に変換して描画
+                    x = int(landmark.x * WIDTH)
+                    y = int(landmark.y * HEIGHT)
+                    # 緑色でランドマークを描画
+                    pygame.draw.circle(screen, (0, 255, 0), (x, y), 20)
 
 def circle_collision(circle_x, circle_y, circle_radius, hand_x, hand_y):
     # 円と手の位置の距離を計算して、円の半径よりも小さい場合は重なっているとみなす
     distance = np.sqrt((circle_x - hand_x)**2 + (circle_y - hand_y)**2)
-    return distance < circle_radius
+    return distance < circle_radius+20
 
 def draw_circles(screen, circles):
     current_time = time.time()
@@ -253,8 +254,8 @@ def main():
                 circles_to_remove = []
                 for i, circle in enumerate(circles):
                     x, y, big_radius, small_radius, circle_start = circle
-                    joint_x= hand_joints_x[8]  # 人差し指のx座標
-                    joint_y = hand_joints_y[8] # 人差し指のy座標
+                    joint_x= hand_joints_x[9]  # 人差し指のx座標
+                    joint_y = hand_joints_y[9] # 人差し指のy座標
                     if circle_collision(x, y, small_radius, joint_x, joint_y):
                         # Great判定
                         if 3.4 < time.time()-circle_start and time.time()-circle_start < 3.7:
