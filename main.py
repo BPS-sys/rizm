@@ -276,6 +276,7 @@ def main():
                             good_sound.set_volume(1) # 音量
                             good_sound.play()
                             screen.blit(Good_text, (x, y))
+                        combo += 1
                         circles_to_remove.append(i)
                             
 
