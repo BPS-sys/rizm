@@ -289,6 +289,7 @@ def main():
 
         if display_countdown and not play_music:
             score = 0  # スコアリセット
+            combo = 0  # コンボリセット
             if not countdown_timer:
                 countdown_timer = time.time()
 
