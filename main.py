@@ -89,7 +89,7 @@ def draw_circles(screen, circles):
         pygame.draw.circle(screen, (255, 255, 255), (x, y), small_radius)
         
         if current_big_radius < small_radius:
-            if current_big_radius+20 < small_radius:
+            if current_big_radius+15 < small_radius:
                 pygame.draw.circle(screen, (255, 0, 0), (x, y), current_big_radius, 2)
             else:
                 pygame.draw.circle(screen, (0, 255, 0), (x, y), current_big_radius, 2)
