@@ -105,10 +105,10 @@ def draw_circles(screen, circles, combo):
 
 def draw_score(screen, score, combo):
     font = pygame.font.Font(None, 36)
-    score_text = font.render("Score: " + str(score), True, (255, 255, 255))    
+    score_text = font.render("Score: " + str(score), True, (84, 255, 255))    
     screen.blit(score_text, (10, 10))
     if combo > 0:
-        combo_text = font.render(str(combo) + "combo!!", True, (255, 255, 255))
+        combo_text = font.render(str(combo) + "combo!!", True, (255, 153, 51))
         screen.blit(combo_text, (50, 300))
 
 def draw_countdown(screen, countdown):
