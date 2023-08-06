@@ -6,7 +6,7 @@ import time
 import cv2
 import mediapipe as mp
 import threading
-import winsound
+
 
 WIDTH = 800
 HEIGHT = 600
@@ -89,7 +89,7 @@ def draw_circles(screen, circles):
         pygame.draw.circle(screen, (255, 255, 255), (x, y), small_radius)
         
         if current_big_radius < small_radius:
-            if current_big_radius+15 < small_radius:
+            if current_big_radius+20 < small_radius:
                 pygame.draw.circle(screen, (255, 0, 0), (x, y), current_big_radius, 2)
             else:
                 pygame.draw.circle(screen, (0, 255, 0), (x, y), current_big_radius, 2)
@@ -120,8 +120,9 @@ def get_rdm_index():
 def start_play_music(file):
     time.sleep(3.4)
     music = pygame.mixer.Sound(file)
+    music.set_volume(0.1)
     music.play()
-    #winsound.PlaySound(file, winsound.SND_FILENAME|winsound.SND_ASYNC|winsound.SND_LOOP)
+    
 
     
 def main():
@@ -130,7 +131,7 @@ def main():
     pygame.display.set_caption("Waveform Circles")
 
     # wav_file = input("このファイルと同じフォルダにある.wavファイルの名前を入力: ")
-    wav_file = "01_アイドルライフスターターパック.wav"
+    wav_file = "01_アイドルライフスターターパックtest.wav"
     waveform = get_waveform_from_wav(wav_file)
 
     pygame.mixer.init()
@@ -163,7 +164,6 @@ def main():
     circle_distance_y = [-100, 100]
     x = 200
     y = 200
-    
     
 
     while running:
@@ -251,9 +251,16 @@ def main():
                     if circle_collision(x, y, small_radius, joint_x, joint_y):
                         if 3.4 < time.time()-circle_start and time.time()-circle_start < 3.7:
                             score += 500 # +500
+                            great_sound = pygame.mixer.Sound("Great.mp3")
+                            great_sound.set_volume(1)
+                            great_sound.play()
                             screen.blit(Great_text, (x, y))
+
                         else:
                             score += 100 # +100
+                            good_sound = pygame.mixer.Sound("Good.mp3")
+                            good_sound.set_volume(1)
+                            good_sound.play()
                             screen.blit(Good_text, (x, y))
                         circles_to_remove.append(i)
                             
