@@ -5,6 +5,7 @@ import random
 import time
 import cv2
 import mediapipe as mp
+import threading
 
 WIDTH = 800
 HEIGHT = 600
@@ -113,6 +114,13 @@ def get_rdm_index():
     rdm_x = random.randint(0, 1)
     rdm_y = random.randint(0, 1)
     return rdm_x, rdm_y
+
+def start_play_music():
+    time.sleep(3)
+    pygame.mixer.music.play()
+    pygame.mixer.music.stop()
+    pygame.mixer.music.play()
+    pygame.mixer.music.set_volume(1)
 
     
 def main():
@@ -268,6 +276,9 @@ def main():
                 draw_countdown(screen, countdown_list[countdown_remaining])
             else:
                 pygame.mixer.music.play()  # エンターキーが押されたら音楽を再生
+                pygame.mixer.music.set_volume(0)
+                th1 = threading.Thread(target=start_play_music)
+                th1.start()
                 play_music = True
                 display_countdown = False
 
