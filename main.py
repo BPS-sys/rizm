@@ -104,7 +104,7 @@ def draw_circles(screen, circles, combo, miss):
         miss += 1
     return combo, miss
 
-def draw_score(screen, score, combo):
+def draw_score(screen, score, combo, max_combo, great, good, miss):
     font = pygame.font.Font(None, 36)
     score_text = font.render("Score: " + str(score), True, (84, 255, 255))    
     screen.blit(score_text, (10, 10))
