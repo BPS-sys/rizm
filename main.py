@@ -86,7 +86,7 @@ def draw_circles(screen, circles):
             continue
 
         # small_radiusの円を描画
-        pygame.draw.circle(screen, (255, 255, 255), (x, y), current_small_radius)
+        pygame.draw.circle(screen, (255, 255, 255), (x, y), small_radius)
         
         if current_big_radius < small_radius:
             if current_big_radius+20 < small_radius:
