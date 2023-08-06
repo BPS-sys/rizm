@@ -63,7 +63,7 @@ def circle_collision(circle_x, circle_y, circle_radius, hand_x, hand_y):
     distance = np.sqrt((circle_x - hand_x)**2 + (circle_y - hand_y)**2)
     return distance < circle_radius+20
 
-def draw_circles(screen, circles, combo):
+def draw_circles(screen, circles, combo, miss):
     current_time = time.time()
     circles_to_remove = []
     for i, circle in enumerate(circles):
@@ -101,12 +101,21 @@ def draw_circles(screen, circles, combo):
     for index in reversed(circles_to_remove):
         circles.pop(index)
         combo = 0
-    return combo
+        miss += 1
+    return combo, miss
 
 def draw_score(screen, score, combo):
     font = pygame.font.Font(None, 36)
     score_text = font.render("Score: " + str(score), True, (84, 255, 255))    
     screen.blit(score_text, (10, 10))
+    max_combo_text = font.render("MaxCombo: " + str(max_combo), True, (255, 255, 255))    
+    screen.blit(max_combo_text, (10, 30))
+    great_text = font.render("Great: " + str(great), True, (255, 255, 255))    
+    screen.blit(great_text, (10, 50))
+    good_text = font.render("Good: " + str(good), True, (255, 255, 255))    
+    screen.blit(good_text, (10, 70))
+    miss_text = font.render("Miss: " + str(miss), True, (255, 255, 255))    
+    screen.blit(miss_text, (10, 90))
     if combo > 0:
         combo_text = font.render(str(combo) + "combo!!", True, (255, 153, 51))
         screen.blit(combo_text, (50, 300))
@@ -159,7 +168,10 @@ def main():
     Great_text = GG_font.render('Great!', True, (255, 255, 255))
     Good_text = GG_font.render('Good!', True, (255, 255, 255))
     combo = 0
-    
+    max_combo = 0
+    great = 0
+    good = 0
+    miss = 0
     # カウントダウン開始時間を記録
     countdown_timer = None
 
@@ -245,7 +257,7 @@ def main():
         for index in reversed(circles_to_remove):
             circles.pop(index)
 
-        combo = draw_circles(screen, circles, combo)
+        combo, miss = draw_circles(screen, circles, combo, miss)
 
         # 手が円に触れているか判定して、触れている場合はその円を消去
         hand_landmarks = detect_hand_landmarks(frame)
@@ -269,6 +281,7 @@ def main():
                             great_sound.set_volume(1) # 音量
                             great_sound.play()
                             screen.blit(Great_text, (x, y))
+                            great += 1
                         # Good判定
                         else:
                             score += 100
@@ -276,6 +289,7 @@ def main():
                             good_sound.set_volume(1) # 音量
                             good_sound.play()
                             screen.blit(Good_text, (x, y))
+                            good += 1
                         combo += 1
                         if combo % 10 == 0:
                             score += combo * 10
@@ -285,13 +299,21 @@ def main():
                 # 接触した円を削除
                 for index in reversed(circles_to_remove):
                     circles.pop(index)
-
+                    
+        # maxコンボ更新
+        if max_combo < combo:
+            max_combo = combo
+            
         # スコアバーを描画
-        draw_score(screen, score, combo)
+        draw_score(screen, score, combo, max_combo, great, good, miss)
 
         if display_countdown and not play_music:
             score = 0  # スコアリセット
             combo = 0  # コンボリセット
+            max_combo = 0
+            great = 0
+            good = 0
+            miss = 0
             if not countdown_timer:
                 countdown_timer = time.time()
 
