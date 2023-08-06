@@ -72,7 +72,7 @@ def draw_circles(screen, circles):
             continue  # 60秒以上前の円は削除
 
         max_lifetime = 60.0  # 1つの円の寿命（秒）
-        shrink_duration = 5.0  # 大きな円が徐々に縮小する期間（秒）
+        shrink_duration = 4.0  # 大きな円が徐々に縮小する期間（秒）
 
         if elapsed_time < shrink_duration:
             # 大きな円が徐々に縮小するフェーズ
@@ -201,8 +201,8 @@ def main():
                         rdm_index_x, rdm_index_y = get_rdm_index()
                         x = random.randint(0, 800)
                         y = random.randint(0, 600)
-                    big_radius = int(abs(current_sample) * 100)
-                    small_radius = int(big_radius * 0.4)
+                    big_radius = int(abs(current_sample) * 100+300)
+                    small_radius = int(big_radius * 0.1)
                     # 新しい円を追加するときに経過時間も記録
                     circles.append((x, y, big_radius, small_radius, time.time()))
                     last_draw_time = pygame.time.get_ticks()
@@ -246,7 +246,7 @@ def main():
                 for i, circle in enumerate(circles):
                     x, y, big_radius, small_radius, circle_start = circle
                     for joint_x, joint_y in zip(hand_joints_x, hand_joints_y):
-                        if circle_collision(x, y, big_radius, joint_x, joint_y):
+                        if circle_collision(x, y, small_radius, joint_x, joint_y):
                             if 3 < time.time()-circle_start:
                                 score += 500 # +500
                                 screen.blit(Great_text, (x, y))
