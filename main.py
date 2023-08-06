@@ -43,8 +43,9 @@ def detect_hand_landmarks(image):
         if results.multi_hand_landmarks:
             for hand_landmarks in results.multi_hand_landmarks:
                 hand_landmarks_list.append(hand_landmarks)
-
-        return hand_landmarks_list
+        if hand_landmarks_list:
+            return hand_landmarks_list
+        return []
 
 def draw_hand_landmarks(screen, hand_landmarks_list):
     for hand_landmarks in hand_landmarks_list:
@@ -245,16 +246,16 @@ def main():
                 circles_to_remove = []
                 for i, circle in enumerate(circles):
                     x, y, big_radius, small_radius, circle_start = circle
-                    for joint_x, joint_y in zip(hand_joints_x, hand_joints_y):
-                        if circle_collision(x, y, small_radius, joint_x, joint_y):
-                            if 3.4 < time.time()-circle_start:
-                                score += 500 # +500
-                                screen.blit(Great_text, (x, y))
-                            else:
-                                score += 100 # +100
-                                screen.blit(Good_text, (x, y))
-                            circles_to_remove.append(i)
-                            break
+                    joint_x= hand_joints_x[8]
+                    joint_y = hand_joints_y[8]
+                    if circle_collision(x, y, small_radius, joint_x, joint_y):
+                        if 3.4 < time.time()-circle_start:
+                            score += 500 # +500
+                            screen.blit(Great_text, (x, y))
+                        else:
+                            score += 100 # +100
+                            screen.blit(Good_text, (x, y))
+                        circles_to_remove.append(i)
                             
 
                 # 接触した円を削除
