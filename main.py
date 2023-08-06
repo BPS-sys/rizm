@@ -176,6 +176,7 @@ def main():
 
         if not pygame.mixer.music.get_busy() and play_music:
             play_music = False
+            countdown_timer = None
 
         screen.fill((0, 0, 0))
 
@@ -273,6 +274,7 @@ def main():
         draw_score(screen, score)
 
         if display_countdown and not play_music:
+            score = 0
             if not countdown_timer:
                 countdown_timer = time.time()
 
@@ -283,7 +285,6 @@ def main():
             if countdown_remaining >= 0 and countdown_remaining < len(countdown_list):
                 draw_countdown(screen, countdown_list[countdown_remaining])
             else:
-                score = 0
                 pygame.mixer.music.play()  # エンターキーが押されたら音楽を再生
                 pygame.mixer.music.set_volume(0)
                 th1 = threading.Thread(target=start_play_music, args=(wav_file, ))
