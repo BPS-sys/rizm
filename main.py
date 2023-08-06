@@ -117,7 +117,7 @@ def get_rdm_index():
     return rdm_x, rdm_y
 
 def start_play_music(file):
-    time.sleep(3)
+    time.sleep(3.4)
     music = pygame.mixer.Sound(file)
     music.play()
     #winsound.PlaySound(file, winsound.SND_FILENAME|winsound.SND_ASYNC|winsound.SND_LOOP)
@@ -247,7 +247,7 @@ def main():
                     x, y, big_radius, small_radius, circle_start = circle
                     for joint_x, joint_y in zip(hand_joints_x, hand_joints_y):
                         if circle_collision(x, y, small_radius, joint_x, joint_y):
-                            if 3 < time.time()-circle_start:
+                            if 3.4 < time.time()-circle_start:
                                 score += 500 # +500
                                 screen.blit(Great_text, (x, y))
                             else:
