@@ -277,6 +277,8 @@ def main():
                             good_sound.play()
                             screen.blit(Good_text, (x, y))
                         combo += 1
+                        if combo % 10 == 0:
+                            score += combo * 10
                         circles_to_remove.append(i)
                             
 
