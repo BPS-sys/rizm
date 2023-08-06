@@ -80,15 +80,6 @@ def draw_circles(screen, circles):
             scale_factor = 1.0 - elapsed_time / shrink_duration
             current_big_radius = int(big_radius * scale_factor)
 
-            # 大きな円とsmall_radiusの円が重なる場合はsmall_radiusの円を縮小する
-            if current_big_radius < small_radius:
-                overlap_radius = small_radius - current_big_radius
-                current_small_radius = max(0, small_radius - overlap_radius)
-            else:
-                current_small_radius = small_radius
-
-            # 大きな円を描画
-            pygame.draw.circle(screen, (0, 0, 255), (x, y), current_big_radius, 2)
         else:
             # 大きな円が縮小し終わった後は削除
             circles_to_remove.append(i)
@@ -96,7 +87,16 @@ def draw_circles(screen, circles):
 
         # small_radiusの円を描画
         pygame.draw.circle(screen, (255, 255, 255), (x, y), current_small_radius)
+        
+        if current_big_radius < small_radius:
+            if current_big_radius+20 < small_radius:
+                pygame.draw.circle(screen, (255, 0, 0), (x, y), current_big_radius, 2)
+            else:
+                pygame.draw.circle(screen, (0, 255, 0), (x, y), current_big_radius, 2)
+        else:
+            pygame.draw.circle(screen, (0, 0, 255), (x, y), current_big_radius, 2)
 
+    
     # 削除する円をリストから削除
     for index in reversed(circles_to_remove):
         circles.pop(index)
@@ -249,7 +249,7 @@ def main():
                     joint_x= hand_joints_x[8]
                     joint_y = hand_joints_y[8]
                     if circle_collision(x, y, small_radius, joint_x, joint_y):
-                        if 3.4 < time.time()-circle_start:
+                        if 3.4 < time.time()-circle_start and time.time()-circle_start < 3.7:
                             score += 500 # +500
                             screen.blit(Great_text, (x, y))
                         else:
