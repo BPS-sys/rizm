@@ -74,7 +74,7 @@ def draw_circles(screen, circles):
             continue  # 60秒以上前の円は削除
 
         max_lifetime = 60.0  # 1つの円の寿命（秒）
-        shrink_duration = 4.0  # 大きな円が徐々に縮小する期間（秒）
+        shrink_duration = 3.0  # 大きな円が徐々に縮小する期間（秒）
 
         if elapsed_time < shrink_duration:
             # 大きな円が徐々に縮小するフェーズ
@@ -89,13 +89,12 @@ def draw_circles(screen, circles):
         # small_radiusの円を描画
         pygame.draw.circle(screen, (255, 255, 255), (x, y), small_radius)
         
-        if current_big_radius < small_radius:
-            if current_big_radius+20 < small_radius:
-                pygame.draw.circle(screen, (255, 0, 0), (x, y), current_big_radius, 2)
-            else:
-                pygame.draw.circle(screen, (0, 255, 0), (x, y), current_big_radius, 2)
-        else:
+        if small_radius-20 < current_big_radius and current_big_radius < small_radius+20:
+            pygame.draw.circle(screen, (0, 255, 0), (x, y), current_big_radius, 2)
+        elif small_radius < current_big_radius:
             pygame.draw.circle(screen, (0, 0, 255), (x, y), current_big_radius, 2)
+        else:
+            pygame.draw.circle(screen, (255, 0, 0), (x, y), current_big_radius, 2)
 
     
     # 削除する円をリストから削除
@@ -258,7 +257,7 @@ def main():
                     joint_y = hand_joints_y[9] # 人差し指のy座標
                     if circle_collision(x, y, small_radius, joint_x, joint_y):
                         # Great判定
-                        if 3.4 < time.time()-circle_start and time.time()-circle_start < 3.7:
+                        if 2.5 < time.time()-circle_start and time.time()-circle_start < 3.0:
                             score += 500
                             great_sound = pygame.mixer.Sound("Great.mp3")
                             great_sound.set_volume(1) # 音量
