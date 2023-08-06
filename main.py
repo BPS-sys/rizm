@@ -125,8 +125,8 @@ def get_rdm_index():
 
 # 音楽の再生
 def start_play_music(file):
-    # 音ズレ対策で3秒後に音楽が流れるように
-    time.sleep(3)
+    # 音ズレ対策で2.7秒後に音楽が流れるように
+    time.sleep(2.7)
     music = pygame.mixer.Sound(file)
     music.set_volume(0.1) # 音量
     music.play()
