@@ -63,7 +63,7 @@ def circle_collision(circle_x, circle_y, circle_radius, hand_x, hand_y):
     distance = np.sqrt((circle_x - hand_x)**2 + (circle_y - hand_y)**2)
     return distance < circle_radius+20
 
-def draw_circles(screen, circles):
+def draw_circles(screen, circles, combo):
     current_time = time.time()
     circles_to_remove = []
     for i, circle in enumerate(circles):
@@ -100,11 +100,16 @@ def draw_circles(screen, circles):
     # 削除する円をリストから削除
     for index in reversed(circles_to_remove):
         circles.pop(index)
+        combo = 0
+    return combo
 
-def draw_score(screen, score):
+def draw_score(screen, score, combo):
     font = pygame.font.Font(None, 36)
-    score_text = font.render("Score: " + str(score), True, (255, 255, 255))
+    score_text = font.render("Score: " + str(score), True, (255, 255, 255))    
     screen.blit(score_text, (10, 10))
+    if combo > 0:
+        combo_text = font.render(str(combo) + "combo!!", True, (255, 255, 255))
+        screen.blit(combo_text, (50, 300))
 
 def draw_countdown(screen, countdown):
     font = pygame.font.Font(None, 100)
@@ -153,7 +158,8 @@ def main():
     GG_font = pygame.font.Font(None, 100)
     Great_text = GG_font.render('Great!', True, (255, 255, 255))
     Good_text = GG_font.render('Good!', True, (255, 255, 255))
-
+    combo = 0
+    
     # カウントダウン開始時間を記録
     countdown_timer = None
 
@@ -239,7 +245,7 @@ def main():
         for index in reversed(circles_to_remove):
             circles.pop(index)
 
-        draw_circles(screen, circles)
+        combo = draw_circles(screen, circles, combo)
 
         # 手が円に触れているか判定して、触れている場合はその円を消去
         hand_landmarks = detect_hand_landmarks(frame)
@@ -278,7 +284,7 @@ def main():
                     circles.pop(index)
 
         # スコアバーを描画
-        draw_score(screen, score)
+        draw_score(screen, score, combo)
 
         if display_countdown and not play_music:
             score = 0  # スコアリセット
